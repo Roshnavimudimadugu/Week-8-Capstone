@@ -58,7 +58,7 @@ The exact variant must be checked against ClinVar using the correct genomic posi
 - **Candidate variant:** chr8:86385979 G>A (GRCh37)
 - **Gene:** CA2
 - **Current analysis result:** The `clinvar_sig` field is `None`.
-- **Evidence status:** A matching ClinVar record and any associated clinical classification require verification.
+- **Evidence status:** No exact matching ClinVar record has been confirmed in the searches performed. Verification remains incomplete.
 - **Interpretation limitation:** The absence of a ClinVar annotation in the current table does not establish whether the variant is benign or pathogenic.
 
 ## Clinical and Population Evidence
@@ -82,7 +82,7 @@ A predicted high-impact consequence or a low population frequency alone does not
 - **Evidence caveat:** The external summary flags a strongly skewed allele balance. This requires cautious interpretation and review of the underlying record and quality metrics.
 - **Interpretation:** The external summary reports the variant at a very low frequency. This observation alone does not establish pathogenicity.
 
-**Verification status:** The frequency is reported in an external variant summary. The underlying gnomAD record, genome build, and quality flags must be checked before the value is treated as a verified final result.
+**Verification status:** The frequency is reported in an external variant summary. The underlying gnomAD record, genome build, exact variant identity, and quality flags must be checked before the value is treated as a verified final result. A search using the same coordinate on GRCh38 did not confirm the variant, so the genome-build discrepancy remains unresolved.
 
 ## Disease-Association Evidence
 
@@ -90,7 +90,7 @@ The CA2 gene and the predicted `stop_gained` consequence provide a starting poin
 
 The exact variant must be assessed using reliable disease resources, relevant transcript information, inheritance evidence, and any available clinical classification.
 
-**Current status:** A disease-related interpretation remains provisional until the evidence has been independently verified.
+**Current status:** A disease-related interpretation remains provisional until the exact variant and supporting evidence have been independently verified.
 
 ## Conflicting Evidence and Uncertainty
 
@@ -99,14 +99,16 @@ The current results include a predicted high-impact consequence and a low popula
 The following points require consideration:
 
 - The ClinVar significance field is `None` in Dataset 38.
+- No exact matching ClinVar record has been confirmed in the searches performed.
 - The external population-frequency summary flags an allele-balance concern.
+- The genome-build discrepancy and exact variant identity remain unresolved.
 - The exact transcript and protein consequence must be confirmed against the selected reference build.
 - The family genotypes and inheritance pattern require evaluation alongside the relevant disease mechanism.
 - Missing clinical evidence must not be interpreted as evidence that a variant is benign.
 
 ## Final Variant Annotation Table
 
-The final annotation table will consolidate the evidence for each selected candidate.
+The following table summarizes the current candidate information and identifies the evidence that remains unresolved.
 
 | Field | Current candidate information |
 |---|---|
@@ -118,8 +120,8 @@ The final annotation table will consolidate the evidence for each selected candi
 | Gene | CA2 |
 | Predicted consequence | `stop_gained` |
 | Dataset 38 maximum allele frequency | Approximately 0.0000325 |
-| External gnomAD frequency | Approximately 6.85 × 10⁻⁷, pending verification |
-| ClinVar classification | Not established from the current candidate table |
+| External gnomAD frequency | Approximately 6.85 × 10⁻⁷, reported externally and pending verification |
+| ClinVar classification | No exact matching record confirmed; verification remains incomplete |
 | Disease association | Requires further evidence review |
 | Interpretation status | Preliminary; not a confirmed clinical classification |
 
@@ -133,6 +135,7 @@ The final annotation table will consolidate the evidence for each selected candi
 - Population frequencies and predicted consequences must be interpreted alongside clinical and inheritance evidence.
 - Candidate prioritization is not equivalent to a confirmed clinical diagnosis.
 - External database records may differ in genome build, dataset, transcript, and quality metrics.
+- The current external population-frequency result has not been independently verified against the underlying gnomAD record.
 
 ## Reproducibility
 
@@ -148,10 +151,4 @@ To reproduce the analysis, document:
 6. The sources and dates of ClinVar and gnomAD reviews.
 7. The method used to assemble the final annotation table.
 
-The relevant Galaxy history outputs should be retained so that the workflow and candidate table can be traced to their source datasets.
-
-## Status
-
-The initial Galaxy workflow and autosomal-recessive candidate filtering have been completed. ClinVar verification, independent confirmation of the gnomAD frequency, disease-association assessment, and final evidence review remain to be completed.
-
-The CA2 candidate is therefore a preliminary result, not a confirmed disease-causing variant.
+The relevant Galaxy history outputs should be retained so that the workflow and candidate table can be
