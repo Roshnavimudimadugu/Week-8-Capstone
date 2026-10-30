@@ -49,19 +49,24 @@ Preliminary evidence-based interpretation
 ```
 
 ## 4. Repository Contents
-
-```text
 Variant-Annotation/
 ├── README.md
 ├── results/
-│   ├── final_variant_annotation.csv
+│   ├── README.md
 │   ├── candidate_variant_summary.md
+│   ├── final_variant_annotation.csv
 │   └── snpeff_summary.md
-└── images/
+└── evidence/
+    ├── README.md
+    ├── 01_galaxy_workflow_history.png
+    ├── 02_snpeff_candidate_annotation.png
+    ├── 03_gnomad_variant_frequency.png
+    ├── 04_dbsnp_variant_summary.png
+    ├── 05_dbsnp_submissions.png
+    ├── 06_clinvar_rsID_search.png
     └── variant_workflow.png
-```
 
-The large raw VCF files are not included in this results-focused repository structure. They can be retained separately or made available through the original Galaxy history. A SnpEff statistics screenshot can be added to `images/` if the Galaxy Dataset 36 statistics output is retained.
+The results/ directory contains the final annotation table and supporting result summaries. The evidence/ directory contains screenshots documenting the Galaxy workflow, SnpEff annotation, gnomAD population-frequency review, dbSNP records and ClinVar search.
 
 ## 5. Variant Annotation Workflow
 
