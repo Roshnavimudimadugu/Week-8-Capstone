@@ -2,13 +2,13 @@
 
 ## Tool and reference
 
-The SnpEff-annotated VCF (Galaxy Dataset 35) records:
+The SnpEff-annotated VCF (Galaxy Dataset 35) was used to examine the functional consequences of the candidate variant.
 
-- SnpEff version: 5.4c
-- Reference database: hg19
-- Candidate chromosome: chr8
-- Candidate VCF position: 86385980
-- Reference / alternate: G>A
+- **SnpEff version:** 5.4c
+- **Reference genome:** hg19 (GRCh37)
+- **Candidate chromosome:** chr8
+- **Candidate VCF position:** 86385980
+- **Reference / alternate allele:** G>A
 
 ## Candidate annotation
 
@@ -24,14 +24,26 @@ The SnpEff-annotated VCF (Galaxy Dataset 35) records:
 | LOF annotation | CA2; 2 transcripts; 0.50 |
 | NMD annotation | CA2; 2 transcripts; 0.50 |
 
-The VCF also contains an intron_variant annotation for CA2 on transcript NM_001293675.1. Consequences are transcript-specific, so the transcript used for interpretation should be stated.
+The candidate variant is annotated as a **stop-gained variant** in the CA2 protein-coding transcript NM_000067.3. This predicts the introduction of a premature termination codon.
+
+The VCF also contains an `intron_variant` annotation for CA2 on transcript NM_001293675.1. Variant consequences are transcript-specific; therefore, the transcript used for interpretation is explicitly stated.
+
+The LOF and NMD values are annotations recorded in the VCF and should not be considered experimental confirmation of loss of function or nonsense-mediated decay.
 
 ## Family genotypes in the SnpEff VCF
 
-- Mother: 0/1
-- Father: 0/1
-- Proband: 1/1
+The genotype calls for the candidate variant are:
 
-This file-specific annotation confirms the candidate record and its genotype calls. It does not provide a clinical pathogenicity classification.
+- **Mother:** 0/1 (heterozygous)
+- **Father:** 0/1 (heterozygous)
+- **Proband:** 1/1 (homozygous alternate)
 
-**Note:** This summary reports the candidate-specific annotation extracted from Dataset 35. It is not a genome-wide SnpEff statistics report. Add the Galaxy Dataset 36 statistics screenshot separately if you want to include the overall annotation summary.
+This genotype pattern is compatible with autosomal recessive inheritance in the trio. However, it does not independently establish disease causality.
+
+## Interpretation
+
+The SnpEff annotation predicts a high-impact stop-gained consequence in CA2. Together with the observed trio genotypes, this supports prioritising the variant for further investigation.
+
+SnpEff provides functional consequence predictions rather than a clinical pathogenicity classification. Further clinical and functional evidence is required before drawing conclusions about pathogenicity.
+
+**Note:** This summary reports the candidate-specific annotation extracted from Galaxy Dataset 35. It is not a genome-wide SnpEff statistics report. Galaxy Dataset 36 contains the overall SnpEff statistics and can be retained as separate workflow evidence.
