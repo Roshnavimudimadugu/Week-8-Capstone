@@ -49,13 +49,20 @@ Preliminary evidence-based interpretation
 ```
 
 ## 4. Repository Contents
+
+The repository is organised as follows:
+
+```text
 Variant-Annotation/
+│
 ├── README.md
+│
 ├── results/
 │   ├── README.md
 │   ├── candidate_variant_summary.md
 │   ├── final_variant_annotation.csv
 │   └── snpeff_summary.md
+│
 └── evidence/
     ├── README.md
     ├── 01_galaxy_workflow_history.png
@@ -65,8 +72,11 @@ Variant-Annotation/
     ├── 05_dbsnp_submissions.png
     ├── 06_clinvar_rsID_search.png
     └── variant_workflow.png
+```
 
-The results/ directory contains the final annotation table and supporting result summaries. The evidence/ directory contains screenshots documenting the Galaxy workflow, SnpEff annotation, gnomAD population-frequency review, dbSNP records and ClinVar search.
+The `results/` directory contains the final variant annotation table and supporting result summaries.
+
+The `evidence/` directory contains screenshots documenting the Galaxy workflow, SnpEff annotation, gnomAD population-frequency review, dbSNP records, ClinVar search and variant workflow diagram.
 
 ## 5. Variant Annotation Workflow
 
