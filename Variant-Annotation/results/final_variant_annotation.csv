@@ -13,9 +13,11 @@ SnpEff_impact,HIGH
 Mother_genotype,G/A
 Father_genotype,G/A
 Proband_genotype,A/A
+Inheritance_pattern,Compatible with autosomal recessive inheritance
 GEMINI_max_aaf_all,3.24886289799e-05
 ClinVar_summary,Not reported in ClinVar (dbSNP summary)
 gnomAD_version,v4.1.2
+gnomAD_GRCh38_variant,8-85473751-G-A
 gnomAD_overall_AC,2
 gnomAD_overall_AN,1612986
 gnomAD_overall_AF,0.000001240
