@@ -1,4 +1,5 @@
 # Capstone 2 — Variant Annotation Workflow
+
 ## From VCF Record to Evidence-Based Interpretation
 
 ## 1. Objective
@@ -80,24 +81,26 @@ The `evidence/` directory contains screenshots documenting the Galaxy workflow, 
 
 ## 5. Variant Annotation Workflow
 
-### 5.1 VCF normalisation
+### 5.1 VCF Normalisation
 
 The source VCF was processed with **bcftools norm** against the hg19 reference. The Dataset 31 output was used as the normalised VCF for subsequent annotation.
 
-### 5.2 SnpEff annotation
+### 5.2 SnpEff Annotation
 
-Galaxy Dataset 35 contains SnpEff annotations. Its VCF header records SnpEff version 5.4c and the `hg19` database. The candidate record is annotated as:
+Galaxy Dataset 35 contains SnpEff annotations. Its VCF header records SnpEff version 5.4c and the `hg19` database.
 
-- Gene: **CA2**
-- Transcript: **NM_000067.3**
-- Consequence: **stop_gained**
-- Predicted protein change: **p.Trp97***
-- HGVS coding change: **c.291G>A**
-- Annotation impact: **HIGH**
+The candidate record is annotated as:
+
+- **Gene:** CA2
+- **Transcript:** NM_000067.3
+- **Consequence:** stop_gained
+- **Predicted protein change:** p.Trp97*
+- **HGVS coding change:** c.291G>A
+- **Annotation impact:** HIGH
 
 The same record also contains a CA2 intron annotation on another transcript. Transcript-specific consequences should therefore be retained when interpreting the result.
 
-### 5.3 GEMINI family-based filtering
+### 5.3 GEMINI Family-Based Filtering
 
 Galaxy Dataset 38 is the output of the GEMINI autosomal-recessive pattern query. The CA2 candidate row reports:
 
@@ -106,13 +109,13 @@ Galaxy Dataset 38 is the output of the GEMINI autosomal-recessive pattern query.
 - `clinvar_sig`: `None`
 - `clinvar_disease_name`: `None`
 - `max_aaf_all`: `3.24886289799e-05`
-- Family genotypes: mother G/A, father G/A, proband A/A
+- **Family genotypes:** Mother G/A, father G/A, proband A/A
 
 The `max_aaf_all` value is the field reported by this GEMINI output. It should not be substituted for the independently reviewed gnomAD v4.1.2 allele frequency below.
 
 ## 6. Preliminary Candidate Review
 
-The prioritised candidate is a CA2 G>A single-nucleotide variant:
+The prioritised candidate is a CA2 G>A single-nucleotide variant.
 
 | Parameter | Finding |
 |---|---|
@@ -123,7 +126,7 @@ The prioritised candidate is a CA2 G>A single-nucleotide variant:
 | dbSNP identifier | rs1173332839 |
 | Transcript | NM_000067.3 |
 | HGVS coding change | c.291G>A |
-| Predicted protein change | p.Trp97Ter (also displayed as p.Trp97*) |
+| Predicted protein change | p.Trp97Ter (p.Trp97*) |
 | SnpEff consequence | stop_gained |
 | SnpEff impact | HIGH |
 | Trio genotypes | Mother G/A; father G/A; proband A/A |
@@ -134,17 +137,19 @@ The parental and proband genotypes are consistent with a homozygous alternate ge
 
 The dbSNP record **rs1173332839** reports:
 
-- GRCh38.p14 position: chr8:85473751
-- Alleles: G>A / G>T
-- Gene and consequence: CA2; stop gained
-- Clinical significance: **Not Reported in ClinVar**
-- Publications: 0 citations on the displayed dbSNP record
+- **GRCh38.p14 position:** chr8:85473751
+- **Alleles:** G>A / G>T
+- **Gene and consequence:** CA2; stop gained
+- **Clinical significance:** Not Reported in ClinVar
+- **Publications:** 0 citations on the displayed dbSNP record
 
 The G>A allele is the allele under review in this capstone. The dbSNP record lists G>T as another alternate allele; evidence for G>T must not be combined with evidence for G>A.
 
-The dbSNP Submissions tab displayed three SubSNP submissions and one frequency submission, including submissions from gnomAD and VINODS. These are dbSNP submissions and do not constitute clinical classifications. No ClinVar clinical significance was reported in the displayed dbSNP summary.
+The dbSNP Submissions tab displayed three SubSNP submissions and one frequency submission, including submissions from gnomAD and VINODS. These are dbSNP submissions and do not constitute clinical classifications.
 
-**Interpretation:** No clinical classification was identified in the reviewed dbSNP/ClinVar summary. This must not be interpreted as evidence that the variant is benign.
+The candidate rsID was also searched in ClinVar, but no matching clinical classification was identified in the reviewed search.
+
+**Interpretation:** No clinical classification was identified in the reviewed dbSNP/ClinVar evidence. This must not be interpreted as evidence that the variant is benign.
 
 ## 8. gnomAD Population-Frequency Review
 
@@ -177,6 +182,8 @@ These terms are recorded here as annotations present in the supplied GEMINI resu
 
 ## 10. Conflicting Evidence and Uncertainty
 
+The following evidence and limitations were considered:
+
 - The candidate has a high-impact, stop-gained annotation in the SnpEff output.
 - The trio genotypes are compatible with a recessive inheritance pattern.
 - The variant is very rare in gnomAD v4.1.2.
@@ -208,7 +215,7 @@ The observed trio genotypes (mother G/A, father G/A, proband A/A) are compatible
 - SnpEff predictions are transcript- and database-dependent.
 - GEMINI filtering prioritises candidates according to the specified inheritance model and available annotations; it does not establish causality.
 - gnomAD represents population reference data and is not a clinical diagnostic database.
-- No ClinVar clinical significance was reported in the reviewed dbSNP summary.
+- No ClinVar clinical significance was reported in the reviewed dbSNP summary or matching ClinVar search.
 - The available evidence does not support a definitive pathogenicity classification.
 
 ## 14. Reproducibility
@@ -220,9 +227,12 @@ To understand or reproduce the analysis:
 3. Review the SnpEff-annotated VCF (Dataset 35), including the SnpEff version and hg19 reference recorded in its header.
 4. Review the GEMINI autosomal-recessive output (Dataset 38) and locate the CA2 candidate row.
 5. Verify the candidate's transcript-specific annotation in the SnpEff VCF.
-6. Convert the genomic coordinate from GRCh37/hg19 to GRCh38/hg38 before querying GRCh38-based external resources.
+6. Convert the candidate coordinate from GRCh37/hg19 to GRCh38/hg38 using UCSC LiftOver.
 7. Review the exact G>A allele in gnomAD v4.1.2 and the corresponding dbSNP record.
-8. Record database versions, genome assembly, allele representation and evidence limitations when updating the interpretation.
+8. Search ClinVar using the candidate identifier and record whether a matching clinical classification is available.
+9. Record database versions, genome assembly, allele representation and evidence limitations when updating the interpretation.
+
+The evidence screenshots and result files are provided in the `evidence/` and `results/` directories.
 
 ## 15. Project Status
 
