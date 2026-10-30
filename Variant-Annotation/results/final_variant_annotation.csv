@@ -1,0 +1,29 @@
+Field,Value
+Gene,CA2
+GRCh37_hg19_position,chr8:86385980
+GRCh38_hg38_position,chr8:85473751
+Reference_allele,G
+Alternate_allele,A
+dbSNP_rsID,rs1173332839
+Transcript,NM_000067.3
+HGVS_c,c.291G>A
+HGVS_p,p.Trp97Ter
+SnpEff_consequence,stop_gained
+SnpEff_impact,HIGH
+Mother_genotype,G/A
+Father_genotype,G/A
+Proband_genotype,A/A
+GEMINI_max_aaf_all,3.24886289799e-05
+ClinVar_summary,Not reported in ClinVar (dbSNP summary)
+gnomAD_version,v4.1.2
+gnomAD_overall_AC,2
+gnomAD_overall_AN,1612986
+gnomAD_overall_AF,0.000001240
+gnomAD_exome_AF,0.000001369
+gnomAD_genome_AC,0
+gnomAD_genome_AN,152174
+gnomAD_homozygous_alternate_count,0
+gnomAD_South_Asian_AC,2
+gnomAD_South_Asian_AN,91046
+gnomAD_South_Asian_AF,0.00002197
+Project_interpretation,Preliminary candidate; further clinical and functional validation required
