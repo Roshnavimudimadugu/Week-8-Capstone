@@ -1,154 +1,216 @@
-# Variant Annotation Capstone
+# Capstone 2 — Variant Annotation Workflow
+## From VCF Record to Evidence-Based Interpretation
 
-## Objective
+## 1. Objective
 
-Develop a reproducible variant annotation workflow, starting from a VCF file and progressing through variant filtering, gene and transcript annotation, population-frequency review, clinical evidence assessment, and evidence-based interpretation.
+The objective of this capstone is to demonstrate a trio-based variant annotation and prioritisation workflow, starting from a VCF and progressing through variant normalisation, functional annotation, inheritance-pattern filtering, and evidence review.
 
-## Workflow
+The workflow prioritises a candidate variant for further investigation. The result is a preliminary computational interpretation and is **not a clinical diagnosis or a definitive pathogenicity classification**.
 
-1. Identify the variant data source
-2. Review and normalize the VCF data
-3. Filter candidate variants using the selected inheritance model
-4. Annotate genes and transcripts
-5. Review predicted variant consequences
-6. Review ClinVar clinical evidence
-7. Review gnomAD population allele frequencies
-8. Examine disease-association evidence
-9. Assess conflicting or missing evidence
-10. Prepare the final variant annotation table
-11. Document interpretation limitations
-12. Provide reproducibility instructions
+## 2. Dataset Description
 
-## Repository Contents
+- **Data type:** Trio variant data (mother, father and proband)
+- **Reference assembly used for the Galaxy workflow:** GRCh37 / hg19
+- **Input:** Galaxy Dataset 30 VCF (the source for the normalised Dataset 31)
+- **Normalised VCF:** Galaxy Dataset 31
+- **SnpEff-annotated VCF:** Galaxy Dataset 35
+- **GEMINI autosomal-recessive output:** Galaxy Dataset 38
 
-| File or Dataset | Description |
+The SnpEff VCF header identifies the reference as hg19 and records SnpEff version 5.4c. The candidate is represented at chr8:86385980 G>A in the VCF (1-based VCF position). The corresponding GEMINI `start` value is chr8:86385979, which is a 0-based start coordinate.
+
+## 3. Workflow Overview
+
+```text
+Input VCF (Galaxy Dataset 30)
+             |
+             v
+VCF normalisation — bcftools (Dataset 31)
+             |
+             v
+Functional annotation — SnpEff (Dataset 35)
+             |
+             v
+GEMINI database and family-based filtering
+             |
+             v
+Autosomal-recessive candidate output (Dataset 38)
+             |
+             v
+Candidate review: CA2, chr8:86385980 G>A
+             |
+             v
+Coordinate conversion: GRCh37 to GRCh38
+             |
+             v
+External evidence review: ClinVar / dbSNP / gnomAD
+             |
+             v
+Preliminary evidence-based interpretation
+```
+
+## 4. Repository Contents
+
+```text
+Variant-Annotation/
+├── README.md
+├── results/
+│   ├── final_variant_annotation.csv
+│   ├── candidate_variant_summary.md
+│   └── snpeff_summary.md
+└── images/
+    └── variant_workflow.png
+```
+
+The large raw VCF files are not included in this results-focused repository structure. They can be retained separately or made available through the original Galaxy history. A SnpEff statistics screenshot can be added to `images/` if the Galaxy Dataset 36 statistics output is retained.
+
+## 5. Variant Annotation Workflow
+
+### 5.1 VCF normalisation
+
+The source VCF was processed with **bcftools norm** against the hg19 reference. The Dataset 31 output was used as the normalised VCF for subsequent annotation.
+
+### 5.2 SnpEff annotation
+
+Galaxy Dataset 35 contains SnpEff annotations. Its VCF header records SnpEff version 5.4c and the `hg19` database. The candidate record is annotated as:
+
+- Gene: **CA2**
+- Transcript: **NM_000067.3**
+- Consequence: **stop_gained**
+- Predicted protein change: **p.Trp97***
+- HGVS coding change: **c.291G>A**
+- Annotation impact: **HIGH**
+
+The same record also contains a CA2 intron annotation on another transcript. Transcript-specific consequences should therefore be retained when interpreting the result.
+
+### 5.3 GEMINI family-based filtering
+
+Galaxy Dataset 38 is the output of the GEMINI autosomal-recessive pattern query. The CA2 candidate row reports:
+
+- `impact`: `stop_gained`
+- `gene`: `CA2`
+- `clinvar_sig`: `None`
+- `clinvar_disease_name`: `None`
+- `max_aaf_all`: `3.24886289799e-05`
+- Family genotypes: mother G/A, father G/A, proband A/A
+
+The `max_aaf_all` value is the field reported by this GEMINI output. It should not be substituted for the independently reviewed gnomAD v4.1.2 allele frequency below.
+
+## 6. Preliminary Candidate Review
+
+The prioritised candidate is a CA2 G>A single-nucleotide variant:
+
+| Parameter | Finding |
 |---|---|
-| `README.md` | Overview of the workflow, preliminary results, limitations, and reproducibility |
-| Galaxy Dataset 31 | Normalized VCF output generated using bcftools |
-| Galaxy Dataset 35 | SnpEff-annotated VCF output |
-| Galaxy Dataset 36 | HTML summary of SnpEff annotation statistics |
-| Galaxy Dataset 38 | GEMINI candidate variants filtered under an autosomal-recessive inheritance model |
-
-*Note: These Galaxy datasets are existing workflow outputs and are not necessarily files stored in this GitHub folder.*
-
-## Variant Annotation Workflow
-
-The existing Galaxy workflow includes VCF normalization with bcftools, variant-effect annotation with SnpEff, and candidate filtering using GEMINI under an autosomal-recessive inheritance model.
-
-The resulting candidate table contains variant coordinates, reference and alternate alleles, predicted effects, gene names, genotype information, population-frequency fields, and available clinical-annotation fields.
-
-## Preliminary Candidate Review
-
-One candidate in the existing GEMINI output is annotated to **CA2**.
-
-- **Variant:** chr8:86385979 G>A (GRCh37, as currently recorded)
-- **Predicted consequence:** `stop_gained`
-- **Maximum allele frequency in Dataset 38:** approximately 0.0000325
-- **ClinVar significance field:** `None` in the current candidate table
-- **Genotypes:** Mother G/A, father G/A, proband A/A
-
-These are preliminary annotations from the existing analysis. The exact variant identity, transcript consequence, population frequency, clinical evidence, and inheritance interpretation must be verified before a disease-related conclusion can be made.
-
-## ClinVar Review
-
-The existing Dataset 38 output does not contain a ClinVar significance annotation for this candidate.
-
-The exact variant must be checked against ClinVar using the correct genomic position and reference genome build.
-
-- **Candidate variant:** chr8:86385979 G>A (GRCh37)
-- **Gene:** CA2
-- **Current analysis result:** The `clinvar_sig` field is `None`.
-- **Evidence status:** No exact matching ClinVar record has been confirmed in the searches performed. Verification remains incomplete.
-- **Interpretation limitation:** The absence of a ClinVar annotation in the current table does not establish whether the variant is benign or pathogenic.
-
-## Clinical and Population Evidence
-
-Clinical interpretation requires more than a predicted variant consequence. ClinVar evidence, population frequency, disease association, inheritance pattern, and potential conflicting evidence must be assessed together.
-
-Population-frequency information should be obtained from gnomAD using the exact variant and a clearly identified genome build and dataset. The relevant allele count, allele frequency, homozygous alternate count, and available quality flags should be recorded.
-
-Disease-association evidence should be evaluated alongside the predicted molecular consequence, genotype pattern, inheritance model, and any conflicting or missing evidence.
-
-A predicted high-impact consequence or a low population frequency alone does not establish pathogenicity.
-
-### gnomAD Population-Frequency Review
-
-- **Candidate:** CA2 chr8:86385979 G>A (GRCh37)
-- **External variant reference:** [GeneBe — CA2 variant record](https://genebe.net/variant/hg19/8-86385979-G-A)
-- **Reported dataset:** gnomAD v4 exomes
-- **Reported allele frequency:** Approximately 6.85 × 10⁻⁷
-- **Reported allele count:** 1
-- **Reported homozygous alternate count:** 0
-- **Evidence caveat:** The external summary flags a strongly skewed allele balance. This requires cautious interpretation and review of the underlying record and quality metrics.
-- **Interpretation:** The external summary reports the variant at a very low frequency. This observation alone does not establish pathogenicity.
-
-**Verification status:** The frequency is reported in an external variant summary. The underlying gnomAD record, genome build, exact variant identity, and quality flags must be checked before the value is treated as a verified final result. A search using the same coordinate on GRCh38 did not confirm the variant, so the genome-build discrepancy remains unresolved.
-
-## Disease-Association Evidence
-
-The CA2 gene and the predicted `stop_gained` consequence provide a starting point for investigating potential disease relevance. However, a gene-level disease association does not establish that this specific variant explains the proband's condition.
-
-The exact variant must be assessed using reliable disease resources, relevant transcript information, inheritance evidence, and any available clinical classification.
-
-**Current status:** A disease-related interpretation remains provisional until the exact variant and supporting evidence have been independently verified.
-
-## Conflicting Evidence and Uncertainty
-
-The current results include a predicted high-impact consequence and a low population-frequency value reported by an external summary. These observations are not sufficient on their own to establish pathogenicity.
-
-The following points require consideration:
-
-- The ClinVar significance field is `None` in Dataset 38.
-- No exact matching ClinVar record has been confirmed in the searches performed.
-- The external population-frequency summary flags an allele-balance concern.
-- The genome-build discrepancy and exact variant identity remain unresolved.
-- The exact transcript and protein consequence must be confirmed against the selected reference build.
-- The family genotypes and inheritance pattern require evaluation alongside the relevant disease mechanism.
-- Missing clinical evidence must not be interpreted as evidence that a variant is benign.
-
-## Final Variant Annotation Table
-
-The following table summarizes the current candidate information and identifies the evidence that remains unresolved.
-
-| Field | Current candidate information |
-|---|---|
-| Chromosome | chr8 |
-| Position | 86385979 |
-| Reference allele | G |
-| Alternate allele | A |
-| Genome build | GRCh37, as currently recorded |
 | Gene | CA2 |
-| Predicted consequence | `stop_gained` |
-| Dataset 38 maximum allele frequency | Approximately 0.0000325 |
-| External gnomAD frequency | Approximately 6.85 × 10⁻⁷, reported externally and pending verification |
-| ClinVar classification | No exact matching record confirmed; verification remains incomplete |
-| Disease association | Requires further evidence review |
-| Interpretation status | Preliminary; not a confirmed clinical classification |
+| GRCh37 / hg19 VCF coordinate | chr8:86385980 |
+| Reference / alternate allele | G>A |
+| GRCh38 / hg38 coordinate | chr8:85473751 |
+| dbSNP identifier | rs1173332839 |
+| Transcript | NM_000067.3 |
+| HGVS coding change | c.291G>A |
+| Predicted protein change | p.Trp97Ter (also displayed as p.Trp97*) |
+| SnpEff consequence | stop_gained |
+| SnpEff impact | HIGH |
+| Trio genotypes | Mother G/A; father G/A; proband A/A |
 
-*The final table must be updated when the exact variant identity, transcript annotation, external population-frequency record, and clinical evidence have been verified.*
+The parental and proband genotypes are consistent with a homozygous alternate genotype in the proband and heterozygosity in both parents. This is compatible with a recessive inheritance pattern in this trio, but does not by itself establish disease causality.
 
-## Limitations
+## 7. ClinVar and dbSNP Review
 
-- The candidate-filtering results depend on the quality and completeness of the input VCF and sample genotype data.
-- Variant consequences depend on the reference genome, transcript annotation, database versions, and software settings.
-- Missing clinical annotations do not establish that a variant is benign.
-- Population frequencies and predicted consequences must be interpreted alongside clinical and inheritance evidence.
-- Candidate prioritization is not equivalent to a confirmed clinical diagnosis.
-- External database records may differ in genome build, dataset, transcript, and quality metrics.
-- The current external population-frequency result has not been independently verified against the underlying gnomAD record.
+The dbSNP record **rs1173332839** reports:
 
-## Reproducibility
+- GRCh38.p14 position: chr8:85473751
+- Alleles: G>A / G>T
+- Gene and consequence: CA2; stop gained
+- Clinical significance: **Not Reported in ClinVar**
+- Publications: 0 citations on the displayed dbSNP record
 
-The workflow was performed using Galaxy tools, including bcftools normalization, SnpEff annotation, and GEMINI candidate filtering.
+The G>A allele is the allele under review in this capstone. The dbSNP record lists G>T as another alternate allele; evidence for G>T must not be combined with evidence for G>A.
 
-To reproduce the analysis, document:
+The dbSNP Submissions tab displayed three SubSNP submissions and one frequency submission, including submissions from gnomAD and VINODS. These are dbSNP submissions and do not constitute clinical classifications. No ClinVar clinical significance was reported in the displayed dbSNP summary.
 
-1. The source and version of the input VCF.
-2. The reference genome build.
-3. The names and versions of the tools used.
-4. The normalization and annotation settings.
-5. The inheritance-model filtering criteria.
-6. The sources and dates of ClinVar and gnomAD reviews.
-7. The method used to assemble the final annotation table.
+**Interpretation:** No clinical classification was identified in the reviewed dbSNP/ClinVar summary. This must not be interpreted as evidence that the variant is benign.
 
-The relevant Galaxy history outputs should be retained so that the workflow and candidate table can be
+## 8. gnomAD Population-Frequency Review
+
+The variant was reviewed in **gnomAD v4.1.2** using the GRCh38 coordinate and allele representation `8-85473751-G-A`.
+
+| Parameter | gnomAD result |
+|---|---:|
+| Overall allele count (AC) | 2 |
+| Overall allele number (AN) | 1,612,986 |
+| Overall allele frequency (AF) | 0.000001240 |
+| Exome AC | 2 |
+| Exome AN | 1,460,812 |
+| Exome AF | 0.000001369 |
+| Genome AC | 0 |
+| Genome AN | 152,174 |
+| Homozygous alternate individuals | 0 |
+| South Asian AC | 2 |
+| South Asian AN | 91,046 |
+| South Asian AF | 0.00002197 |
+
+The candidate is very rare in the gnomAD dataset. Two alternate alleles were observed overall, and no homozygous alternate individuals were reported. The South Asian subgroup frequency is based on two observed alternate alleles.
+
+Population rarity is supporting evidence only. It does not independently establish pathogenicity, and the small allele count should be considered when interpreting subgroup frequencies.
+
+## 9. Disease-Association Evidence
+
+The GEMINI output's `clinvar_gene_phenotype` field contains the terms `carbonic_anhydrase_ii_variant` and `osteopetrosis_with_renal_tubular_acidosis`.
+
+These terms are recorded here as annotations present in the supplied GEMINI result. They are not, on their own, proof that this specific variant causes the phenotype. A separate, authoritative gene–disease and variant-level evidence assessment would be needed before making a clinical association.
+
+## 10. Conflicting Evidence and Uncertainty
+
+- The candidate has a high-impact, stop-gained annotation in the SnpEff output.
+- The trio genotypes are compatible with a recessive inheritance pattern.
+- The variant is very rare in gnomAD v4.1.2.
+- The reviewed dbSNP summary reports no ClinVar clinical significance.
+- The dbSNP record includes both G>A and G>T alleles; only G>A is the candidate assessed here.
+- Population frequency and predicted consequence do not establish pathogenicity.
+- The available computational and database evidence is insufficient for a definitive clinical classification.
+
+## 11. Final Variant Annotation Table
+
+See [`results/final_variant_annotation.csv`](results/final_variant_annotation.csv) for the consolidated machine-readable table.
+
+The candidate is classified in this project as:
+
+**Preliminary candidate — further clinical and functional validation required.**
+
+This is a project-level prioritisation label, not a clinical classification such as pathogenic, likely pathogenic, VUS, likely benign or benign.
+
+## 12. Biological Interpretation
+
+The CA2 candidate is annotated by SnpEff as a stop-gained variant, with the transcript-specific predicted protein change p.Trp97Ter. A premature termination codon may disrupt the encoded protein, but the biological effect should not be assumed from annotation alone.
+
+The observed trio genotypes (mother G/A, father G/A, proband A/A) are compatible with recessive inheritance. The very low gnomAD allele frequency provides population context. However, the absence of a reported ClinVar classification and the lack of variant-specific functional or clinical evidence mean that the candidate remains preliminary.
+
+## 13. Limitations
+
+- The analysis depends on the quality and completeness of the supplied trio VCF and family metadata.
+- Variant coordinates differ between genome assemblies. The GRCh37-to-GRCh38 coordinate conversion was performed using UCSC LiftOver; allele identity and strand representation should be checked when transferring variants between assemblies.
+- SnpEff predictions are transcript- and database-dependent.
+- GEMINI filtering prioritises candidates according to the specified inheritance model and available annotations; it does not establish causality.
+- gnomAD represents population reference data and is not a clinical diagnostic database.
+- No ClinVar clinical significance was reported in the reviewed dbSNP summary.
+- The available evidence does not support a definitive pathogenicity classification.
+
+## 14. Reproducibility
+
+To understand or reproduce the analysis:
+
+1. Start from the original trio VCF in the Galaxy history (Dataset 30).
+2. Review the bcftools-normalised VCF (Dataset 31).
+3. Review the SnpEff-annotated VCF (Dataset 35), including the SnpEff version and hg19 reference recorded in its header.
+4. Review the GEMINI autosomal-recessive output (Dataset 38) and locate the CA2 candidate row.
+5. Verify the candidate's transcript-specific annotation in the SnpEff VCF.
+6. Convert the genomic coordinate from GRCh37/hg19 to GRCh38/hg38 before querying GRCh38-based external resources.
+7. Review the exact G>A allele in gnomAD v4.1.2 and the corresponding dbSNP record.
+8. Record database versions, genome assembly, allele representation and evidence limitations when updating the interpretation.
+
+## 15. Project Status
+
+**Computational workflow and preliminary candidate review documented.**
+
+The CA2 G>A variant is retained as a preliminary candidate because the computational annotation, trio genotypes and population-frequency evidence warrant further review. Clinical pathogenicity has not been established.
